@@ -1354,7 +1354,6 @@ select:
           id: bs_pending_restart
           state: true
 
-select:
   # EU relay light mode template (universal with availability)
   - id: sl_relay_1_light_mode_eu_lr
     name: Relay 1 light mode
