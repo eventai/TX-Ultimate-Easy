@@ -1419,8 +1419,8 @@ select:
           previous_mode_1 = current_mode;
       
       - text_sensor.template.publish:
-        id: ts_relay_1_light_mode_canon
-        state: !lambda 'return x;'
+          id: ts_relay_1_light_mode_canon
+          state: !lambda 'return x;'
 
   - id: sl_relay_2_light_mode_eu
     name: Relay 2 light mode
@@ -1487,8 +1487,8 @@ select:
           previous_mode_2 = current_mode;
       
       - text_sensor.template.publish:
-        id: ts_relay_2_light_mode_canon
-        state: !lambda 'return x;'
+          id: ts_relay_2_light_mode_canon
+          state: !lambda 'return x;'
 
   - id: sl_relay_3_light_mode_eu
     name: Relay 3 light mode
@@ -1555,8 +1555,8 @@ select:
           previous_mode_3 = current_mode;
       
       - text_sensor.template.publish:
-        id: ts_relay_3_light_mode_canon
-        state: !lambda 'return x;'
+          id: ts_relay_3_light_mode_canon
+          state: !lambda 'return x;'
 
   - id: sl_relay_4_light_mode_eu
     name: Relay 4 light mode
@@ -1623,7 +1623,7 @@ select:
           previous_mode_4 = current_mode;
       
       - text_sensor.template.publish:
-        id: ts_relay_4_light_mode_canon
-        state: !lambda 'return x;'
+          id: ts_relay_4_light_mode_canon
+          state: !lambda 'return x;'
 
 ...
