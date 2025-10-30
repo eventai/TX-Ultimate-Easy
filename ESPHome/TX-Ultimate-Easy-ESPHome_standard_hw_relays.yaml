@@ -1304,27 +1304,19 @@ script:
             switch (i) {
               case 0:
                 relay_state = id(sw_relay_1).state;
-                light_mode = id(is_us_model)
-                              ? id(sl_relay_1_light_mode_us)->state
-                              : id(sl_relay_1_light_mode_eu)->state;
+                light_mode = id(is_us_model) ? id(sl_relay_1_light_mode_us)->state : id(ts_relay_1_light_mode_canon).state;
                 break;
               case 1:
                 relay_state = id(sw_relay_2).state;
-                light_mode = id(is_us_model)
-                              ? id(sl_relay_2_light_mode_us)->state
-                              : id(sl_relay_2_light_mode_eu)->state;
+                light_mode = id(is_us_model) ? id(sl_relay_2_light_mode_us)->state : id(ts_relay_2_light_mode_canon).state;
                 break;
               case 2:
                 relay_state = id(sw_relay_3).state;
-                light_mode = id(is_us_model)
-                              ? id(sl_relay_3_light_mode_us)->state
-                              : id(sl_relay_3_light_mode_eu)->state;
+                light_mode = id(is_us_model) ? id(sl_relay_3_light_mode_us)->state : id(ts_relay_3_light_mode_canon).state;
                 break;
               case 3:
                 relay_state = id(sw_relay_4).state;
-                light_mode = id(is_us_model)
-                              ? id(sl_relay_4_light_mode_us)->state
-                              : id(sl_relay_4_light_mode_eu)->state;
+                light_mode = id(is_us_model) ? id(sl_relay_4_light_mode_us)->state : id(ts_relay_4_light_mode_canon).state;
                 break;
             }
 
@@ -1333,26 +1325,261 @@ script:
 
             // Use light_set_state for light updates
             if (light_mode != "${LIGHT_MODE_DISABLED_TEXT}") {
-              if (light_mode == light_mode_group_1 || light_mode == "${LIGHT_MODE_BOTH_TEXT}") {
+              if (light_mode == light_mode_group_1 || light_mode == "${LIGHT_MODE_BOTH_TEXT}" || light_mode == "${LIGHT_MODE_LEFT_TEXT}") {
                 light_set_state->execute(1, i, relay_state);  // Left/bottom light
               }
-              if (light_mode == light_mode_group_2 || light_mode == "${LIGHT_MODE_BOTH_TEXT}") {
+              if (light_mode == light_mode_group_2 || light_mode == "${LIGHT_MODE_BOTH_TEXT}" || light_mode == "${LIGHT_MODE_RIGHT_TEXT}") {
                 light_set_state->execute(2, i, relay_state);  // Right/top light
               }
             }
           }
 
+
 select:
-  # EU relay light mode template
+  - id: sl_gang_count
+    name: Gang count
+    platform: template
+    options:
+      - "1"
+      - "2"
+      - "3"
+      - "4"
+    initial_option: "2"
+    optimistic: true
+    restore_value: true
+    entity_category: config
+    icon: mdi:counter
+    on_value:
+      - binary_sensor.template.publish:
+          id: bs_pending_restart
+          state: true
+
+select:
+  # EU relay light mode template (universal with availability)
+  - id: sl_relay_1_light_mode_eu_lr
+    name: Relay 1 light mode
+    platform: template
+    availability:
+      lambda: |-
+        switch (id(gang_count)) {
+          case 1: return 1 == 1;
+          case 2: return 1 == 1 || 1 == 2;
+          case 3: return 1 == 1 || 1 == 3;
+          case 4: return 1 == 1 || 1 == 4;
+        }
+        return false;
+    options:
+      - "${LIGHT_MODE_DISABLED_TEXT}"
+      - "${LIGHT_MODE_BOTTOM_TEXT}"
+      - "${LIGHT_MODE_TOP_TEXT}"
+      - "${LIGHT_MODE_BOTH_TEXT}"
+      - "${LIGHT_MODE_LEFT_TEXT}"
+      - "${LIGHT_MODE_RIGHT_TEXT}"
+    initial_option: "${LIGHT_MODE_BOTTOM_TEXT}"
+    optimistic: true
+    restore_value: false
+    internal: true
+    entity_category: config
+    disabled_by_default: false
+    icon: mdi:dots-square
+  
+  - id: sl_relay_1_light_mode_eu_std
+    name: Relay 1 light mode
+    platform: template
+    
+    availability:
+      lambda: |-
+        switch (id(gang_count)) {
+          case 1: return false;
+          case 2: return false;  // both relays support LR
+          case 3: return 1 == 2;  // only middle relay uses STD
+          case 4: return 1 == 2 || 1 == 3;
+        }
+        return false;
+    options:
+      - "${LIGHT_MODE_DISABLED_TEXT}"
+      - "${LIGHT_MODE_BOTTOM_TEXT}"
+      - "${LIGHT_MODE_TOP_TEXT}"
+      - "${LIGHT_MODE_BOTH_TEXT}"
+    initial_option: "${LIGHT_MODE_BOTTOM_TEXT}"
+    optimistic: true
+    restore_value: false
+    internal: true
+    entity_category: config
+    disabled_by_default: false
+    icon: mdi:dots-square
+  
+  - id: sl_relay_2_light_mode_eu_lr
+    name: Relay 2 light mode
+    platform: template
+    availability:
+      lambda: |-
+        switch (id(gang_count)) {
+          case 1: return 2 == 1;
+          case 2: return 2 == 1 || 2 == 2;
+          case 3: return 2 == 1 || 2 == 3;
+          case 4: return 2 == 1 || 2 == 4;
+        }
+        return false;
+    options:
+      - "${LIGHT_MODE_DISABLED_TEXT}"
+      - "${LIGHT_MODE_BOTTOM_TEXT}"
+      - "${LIGHT_MODE_TOP_TEXT}"
+      - "${LIGHT_MODE_BOTH_TEXT}"
+      - "${LIGHT_MODE_LEFT_TEXT}"
+      - "${LIGHT_MODE_RIGHT_TEXT}"
+    initial_option: "${LIGHT_MODE_BOTTOM_TEXT}"
+    optimistic: true
+    restore_value: false
+    internal: true
+    entity_category: config
+    disabled_by_default: false
+    icon: mdi:dots-square
+  
+  - id: sl_relay_2_light_mode_eu_std
+    name: Relay 2 light mode
+    platform: template
+    
+    availability:
+      lambda: |-
+        switch (id(gang_count)) {
+          case 1: return false;
+          case 2: return false;  // both relays support LR
+          case 3: return 2 == 2;  // only middle relay uses STD
+          case 4: return 2 == 2 || 2 == 3;
+        }
+        return false;
+    options:
+      - "${LIGHT_MODE_DISABLED_TEXT}"
+      - "${LIGHT_MODE_BOTTOM_TEXT}"
+      - "${LIGHT_MODE_TOP_TEXT}"
+      - "${LIGHT_MODE_BOTH_TEXT}"
+    initial_option: "${LIGHT_MODE_BOTTOM_TEXT}"
+    optimistic: true
+    restore_value: false
+    internal: true
+    entity_category: config
+    disabled_by_default: false
+    icon: mdi:dots-square
+  
+  - id: sl_relay_3_light_mode_eu_lr
+    name: Relay 3 light mode
+    platform: template
+    availability:
+      lambda: |-
+        switch (id(gang_count)) {
+          case 1: return 3 == 1;
+          case 2: return 3 == 1 || 3 == 2;
+          case 3: return 3 == 1 || 3 == 3;
+          case 4: return 3 == 1 || 3 == 4;
+        }
+        return false;
+    options:
+      - "${LIGHT_MODE_DISABLED_TEXT}"
+      - "${LIGHT_MODE_BOTTOM_TEXT}"
+      - "${LIGHT_MODE_TOP_TEXT}"
+      - "${LIGHT_MODE_BOTH_TEXT}"
+      - "${LIGHT_MODE_LEFT_TEXT}"
+      - "${LIGHT_MODE_RIGHT_TEXT}"
+    initial_option: "${LIGHT_MODE_BOTTOM_TEXT}"
+    optimistic: true
+    restore_value: false
+    internal: true
+    entity_category: config
+    disabled_by_default: false
+    icon: mdi:dots-square
+  
+  - id: sl_relay_3_light_mode_eu_std
+    name: Relay 3 light mode
+    platform: template
+    
+    availability:
+      lambda: |-
+        switch (id(gang_count)) {
+          case 1: return false;
+          case 2: return false;  // both relays support LR
+          case 3: return 3 == 2;  // only middle relay uses STD
+          case 4: return 3 == 2 || 3 == 3;
+        }
+        return false;
+    options:
+      - "${LIGHT_MODE_DISABLED_TEXT}"
+      - "${LIGHT_MODE_BOTTOM_TEXT}"
+      - "${LIGHT_MODE_TOP_TEXT}"
+      - "${LIGHT_MODE_BOTH_TEXT}"
+    initial_option: "${LIGHT_MODE_BOTTOM_TEXT}"
+    optimistic: true
+    restore_value: false
+    internal: true
+    entity_category: config
+    disabled_by_default: false
+    icon: mdi:dots-square
+  
+  - id: sl_relay_4_light_mode_eu_lr
+    name: Relay 4 light mode
+    platform: template
+    availability:
+      lambda: |-
+        switch (id(gang_count)) {
+          case 1: return 4 == 1;
+          case 2: return 4 == 1 || 4 == 2;
+          case 3: return 4 == 1 || 4 == 3;
+          case 4: return 4 == 1 || 4 == 4;
+        }
+        return false;
+    options:
+      - "${LIGHT_MODE_DISABLED_TEXT}"
+      - "${LIGHT_MODE_BOTTOM_TEXT}"
+      - "${LIGHT_MODE_TOP_TEXT}"
+      - "${LIGHT_MODE_BOTH_TEXT}"
+      - "${LIGHT_MODE_LEFT_TEXT}"
+      - "${LIGHT_MODE_RIGHT_TEXT}"
+    initial_option: "${LIGHT_MODE_BOTTOM_TEXT}"
+    optimistic: true
+    restore_value: false
+    internal: true
+    entity_category: config
+    disabled_by_default: false
+    icon: mdi:dots-square
+  
+  - id: sl_relay_4_light_mode_eu_std
+    name: Relay 4 light mode
+    platform: template
+    
+    availability:
+      lambda: |-
+        switch (id(gang_count)) {
+          case 1: return false;
+          case 2: return false;  // both relays support LR
+          case 3: return 4 == 2;  // only middle relay uses STD
+          case 4: return 4 == 2 || 4 == 3;
+        }
+        return false;
+    options:
+      - "${LIGHT_MODE_DISABLED_TEXT}"
+      - "${LIGHT_MODE_BOTTOM_TEXT}"
+      - "${LIGHT_MODE_TOP_TEXT}"
+      - "${LIGHT_MODE_BOTH_TEXT}"
+    initial_option: "${LIGHT_MODE_BOTTOM_TEXT}"
+    optimistic: true
+    restore_value: false
+    internal: true
+    entity_category: config
+    disabled_by_default: false
+    icon: mdi:dots-square 
+    
+    #EU relay light mode template
   - &relay_light_mode_eu
     id: sl_relay_1_light_mode_eu
-    name: Relay 1 light mode EU
+    name: Relay 1 light mode
     platform: template
     options:
       - "${LIGHT_MODE_DISABLED_TEXT}"
       - "${LIGHT_MODE_BOTTOM_TEXT}"
       - "${LIGHT_MODE_TOP_TEXT}"
       - "${LIGHT_MODE_BOTH_TEXT}"
+      - "${LIGHT_MODE_LEFT_TEXT}"
+      - "${LIGHT_MODE_RIGHT_TEXT}"
     initial_option: "${LIGHT_MODE_BOTTOM_TEXT}"
     optimistic: true
     restore_value: false
@@ -1401,7 +1628,7 @@ select:
   # US relay light mode template
   - &relay_light_mode_us
     id: sl_relay_1_light_mode_us
-    name: Relay 1 light mode US
+    name: Relay 1 light mode
     platform: template
     options:
       - "${LIGHT_MODE_DISABLED_TEXT}"
@@ -1476,8 +1703,8 @@ select:
             id(relay_modes_packed) = (id(relay_modes_packed) & ~(0x0F << 0)) |
                                       ((id(sl_relay_1_mode).active_index().value_or(0) & 0x0F) << 0);
 
-  - id: sl_relay_2_light_mode_eu
-    name: Relay 2 light mode EU
+
+    name: Relay 2 light mode
     <<: *relay_light_mode_eu
     on_value:
       - lambda: |-
@@ -1518,7 +1745,7 @@ select:
           previous_mode = current_mode;
 
   - id: sl_relay_2_light_mode_us
-    name: Relay 2 light mode US
+    name: Relay 2 light mode
     <<: *relay_light_mode_us
     on_value:
       - lambda: |-
@@ -1581,8 +1808,8 @@ select:
             id(relay_modes_packed) = (id(relay_modes_packed) & ~(0x0F << 4)) |
                                       ((id(sl_relay_2_mode).active_index().value_or(0) & 0x0F) << 4);
 
-  - id: sl_relay_3_light_mode_eu
-    name: Relay 3 light mode EU
+
+    name: Relay 3 light mode
     <<: *relay_light_mode_eu
     on_value:
       - lambda: |-
@@ -1623,7 +1850,7 @@ select:
           previous_mode = current_mode;
 
   - id: sl_relay_3_light_mode_us
-    name: Relay 3 light mode US
+    name: Relay 3 light mode
     <<: *relay_light_mode_us
     on_value:
       - lambda: |-
@@ -1686,8 +1913,8 @@ select:
             id(relay_modes_packed) = (id(relay_modes_packed) & ~(0x0F << 8)) |
                                       ((id(sl_relay_3_mode).active_index().value_or(0) & 0x0F) << 8);
 
-  - id: sl_relay_4_light_mode_eu
-    name: Relay 4 light mode EU
+
+    name: Relay 4 light mode
     <<: *relay_light_mode_eu
     on_value:
       - lambda: |-
@@ -1726,7 +1953,7 @@ select:
           previous_mode = current_mode;
 
   - id: sl_relay_4_light_mode_us
-    name: Relay 4 light mode US
+    name: Relay 4 light mode
     <<: *relay_light_mode_us
     on_value:
       - lambda: |-
@@ -1910,3 +2137,26 @@ switch:
         - lambda: id(relay_switches_packed) &= ~0x10;  // Clear bit 4
 
 ...
+
+
+text_sensor:
+  - platform: template
+    id: ts_relay_1_light_mode_canon
+    name: "Relay 1 light mode (canon)"
+    entity_category: diagnostic
+    internal: true
+  - platform: template
+    id: ts_relay_2_light_mode_canon
+    name: "Relay 2 light mode (canon)"
+    entity_category: diagnostic
+    internal: true
+  - platform: template
+    id: ts_relay_3_light_mode_canon
+    name: "Relay 3 light mode (canon)"
+    entity_category: diagnostic
+    internal: true
+  - platform: template
+    id: ts_relay_4_light_mode_canon
+    name: "Relay 4 light mode (canon)"
+    entity_category: diagnostic
+    internal: true

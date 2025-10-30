@@ -94,7 +94,7 @@ light:
   # Those lights are available based on the model selections
   - &light_partition_with_effects_eu
     id: light_eu
-    name: Light EU
+    name: Backlight
     platform: partition
     default_transition_length: ${default_transition_length}
     internal: true
@@ -157,7 +157,7 @@ light:
 
   - &light_partition_with_effects_us
     id: light_us
-    name: Light US
+    name: Backlight
     platform: partition
     default_transition_length: ${default_transition_length}
     internal: true

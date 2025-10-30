@@ -11,10 +11,6 @@
 ##### - For normal system use, modifications to this file are NOT required.                    #####
 ####################################################################################################
 ---
-substitutions:
-  name: tx-ultimate-easy
-  friendly_name: TX Ultimate Easy
-
   <<: !include ../versioning/VERSION_YAML
 
   EVENT_NAME: esphome.tx_ultimate_easy
@@ -77,11 +73,7 @@ esp32:
 esphome:
   name: ${name}
   friendly_name: ${friendly_name}
-  comment: TX Ultimate Easy
   min_version: 2025.8.0
-  project:
-    name: "edwardtfn.tx_ultimate_easy"
-    version: ${version}
   platformio_options:
     build_flags:
       - -D TX_ULTIMATE_EASY_CORE_COMMON
@@ -112,7 +104,7 @@ esphome:
 external_components:
   - source:
       type: git
-      url: https://github.com/edwardtfn/TX-Ultimate-Easy
+      url: https://github.com/eventai/TX-Ultimate-Easy
       ref: v${version}
     refresh: 1h
     components:
@@ -291,13 +283,14 @@ select:
   - id: sl_tx_model_format
     name: Model (Format)
     platform: template
+
     options:
       - "${TX_MODEL_FORMAT_EU_TEXT}"
       - "${TX_MODEL_FORMAT_US_TEXT}"
     initial_option: "${TX_MODEL_FORMAT_EU_TEXT}"
     optimistic: true
     restore_value: false
-    internal: false
+    internal: true # Will be used only in EU
     entity_category: config
     disabled_by_default: false
     icon: mdi:tablet-cellphone
@@ -335,7 +328,7 @@ select:
 
 text_sensor:
   - id: tx_fw_version
-    name: TX Ultimate Easy Firmware Version
+    name: Firmware Version
     platform: template
     entity_category: diagnostic
     icon: mdi:tag-text-outline
