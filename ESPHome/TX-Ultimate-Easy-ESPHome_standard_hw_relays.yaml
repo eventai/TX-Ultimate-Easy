@@ -1808,7 +1808,7 @@ select:
             id(relay_modes_packed) = (id(relay_modes_packed) & ~(0x0F << 4)) |
                                       ((id(sl_relay_2_mode).active_index().value_or(0) & 0x0F) << 4);
 
-
+  - id: sl_relay_3_light_mode_eu
     name: Relay 3 light mode
     <<: *relay_light_mode_eu
     on_value:
@@ -1913,7 +1913,7 @@ select:
             id(relay_modes_packed) = (id(relay_modes_packed) & ~(0x0F << 8)) |
                                       ((id(sl_relay_3_mode).active_index().value_or(0) & 0x0F) << 8);
 
-
+  - id: sl_relay_4_light_mode_eu
     name: Relay 4 light mode
     <<: *relay_light_mode_eu
     on_value:
