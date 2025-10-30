@@ -78,6 +78,9 @@ esphome:
   name: ${name}
   friendly_name: ${friendly_name}
   min_version: 2025.8.0
+  project:
+    name: "eventai.tx_ultimate_easy"
+    version: ${version}
   platformio_options:
     build_flags:
       - -D TX_ULTIMATE_EASY_CORE_COMMON
