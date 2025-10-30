@@ -11,6 +11,10 @@
 ##### - For normal system use, modifications to this file are NOT required.                    #####
 ####################################################################################################
 ---
+substitutions:
+  name: tx-ultimate-easy
+  friendly_name: TX Ultimate Easy
+
   <<: !include ../versioning/VERSION_YAML
 
   EVENT_NAME: esphome.tx_ultimate_easy
