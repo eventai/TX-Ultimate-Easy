@@ -2136,9 +2136,6 @@ switch:
               - light.turn_off: light_output_4
         - lambda: id(relay_switches_packed) &= ~0x10;  // Clear bit 4
 
-...
-
-
 text_sensor:
   - platform: template
     id: ts_relay_1_light_mode_canon
@@ -2160,3 +2157,5 @@ text_sensor:
     name: "Relay 4 light mode (canon)"
     entity_category: diagnostic
     internal: true
+
+...
