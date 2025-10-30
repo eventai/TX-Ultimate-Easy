@@ -1342,6 +1342,20 @@ script:
             }
           }
 
+text_sensor:
+  - platform: template
+    id: ts_relay_1_light_mode_canon
+    internal: true
+  - platform: template
+    id: ts_relay_2_light_mode_canon
+    internal: true
+  - platform: template
+    id: ts_relay_3_light_mode_canon
+    internal: true
+  - platform: template
+    id: ts_relay_4_light_mode_canon
+    internal: true
+
 select:
   # EU relay light mode template
   - &relay_light_mode_eu
