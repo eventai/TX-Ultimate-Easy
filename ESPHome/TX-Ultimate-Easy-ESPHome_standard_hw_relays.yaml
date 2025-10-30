@@ -1703,7 +1703,7 @@ select:
             id(relay_modes_packed) = (id(relay_modes_packed) & ~(0x0F << 0)) |
                                       ((id(sl_relay_1_mode).active_index().value_or(0) & 0x0F) << 0);
 
-
+  - id: sl_relay_2_light_mode_eu
     name: Relay 2 light mode
     <<: *relay_light_mode_eu
     on_value:
